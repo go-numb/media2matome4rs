@@ -1,0 +1,52 @@
+name: Rust
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Build
+      run: cargo build --release
+
+    - name: Archive the build
+      uses: actions/upload-artifact@v2
+      with:
+        name: my_rust_project
+        path: target/release/my_rust_project
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my_rust_project
+          path: my_rust_project
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: my_rust_project
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: "Release for version ${{ github.ref }}."
+          name: ${{ github.ref }}
+          tag: ${{ github.ref }}
+          draft: false
+          prerelease: false
