@@ -1,12 +1,11 @@
-// Protcol
+// sequence
 // 1. 動画または音声ファイルのパスを受け取る
 // 2. 動画または音声ファイルを読み込む
 // 3. 動画ならば、音声ファイルに変換する
-// 4. 音声ファイルをwisperでテキストに変換する
+// 4. 音声ファイルをwhisperでテキストに変換する
 // 5. 文字起こししたテキストをClaudeAIに渡し、要約する
 // 6. 要約したテキストを返す
 
-use serde_json::json;
 use serde_json::Value;
 use std::env;
 use std::fs;
@@ -25,7 +24,7 @@ async fn main() {
     // 引数を取得する
     let args = get_flag().unwrap();
 
-    let file_path = &args[3];
+    let file_path = &args[2];
     println!("input file path: {:?}", file_path);
     let file_name = Path::new(file_path).file_stem().unwrap().to_str().unwrap();
     let file_extension = Path::new(file_path).extension().unwrap().to_str().unwrap();
@@ -308,6 +307,7 @@ fn write_to_file(res: Value) -> Result<String, std::io::Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     #[test]
     fn test_get_flag() {

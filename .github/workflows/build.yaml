@@ -26,8 +26,8 @@ jobs:
     - name: Archive the build
       uses: actions/upload-artifact@v2
       with:
-        name: my_rust_project
-        path: target/release/my_rust_project
+        name: media2matome4rs
+        path: target/release/media2matome4rs
 
   release:
     needs: [build]
@@ -37,13 +37,13 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: my_rust_project
-          path: my_rust_project
+          name: media2matome4rs
+          path: media2matome4rs
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: my_rust_project
+          artifacts: media2matome4rs
           token: ${{ secrets.GITHUB_TOKEN }}
           body: "Release for version ${{ github.ref }}."
           name: ${{ github.ref }}
